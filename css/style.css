@@ -1,0 +1,138 @@
+/* =======================================================
+   RESET E FUNDO GERAL
+======================================================== */
+body {
+    margin: 0;
+    padding: 0;
+    /* Fundo gradiente roxo/azul  */
+    background: linear-gradient(135deg, #2A0845 0%, #6441A5 100%);
+    color: white;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden; /* Evita barra de rolagem na tela do jogo */
+}
+
+/* =======================================================
+   ESTRUTURA DA TELA DE JOGO (Lado a Lado)
+======================================================== */
+.container-jogo {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Barra lateral escura na esquerda (onde fica o marreco e o alvo) */
+.barra-lateral {
+    width: 250px;
+    background-color: rgba(0, 0, 0, 0.4); /* Fundo translúcido escuro */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Área principal (onde a bolinha cai e a imagem revela) */
+.area-ritmo {
+    flex-grow: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* =======================================================
+   ELEMENTOS DO JOGO DE RITMO
+======================================================== */
+/* O alvo na barra lateral */
+.area-alvo {
+    margin-top: auto; /* Joga o alvo para a parte de baixo da tela */
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.linha-alvo {
+    width: 100px;
+    height: 100px;
+    border: 3px dashed #FFD700; /* Borda amarela tracejada */
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* A bolinha branca que vai cair */
+.bolinha-ritmo {
+    width: 60px;
+    height: 60px;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+    position: absolute;
+    top: -70px; /* Começa escondida fora da tela, em cima */
+    /* A animação de queda será controlada pelo JavaScript */
+}
+
+/* =======================================================
+   MODAL DA PERGUNTA (Estilo Bootstrap + Customização)
+======================================================== */
+.modal-pergunta {
+    position: absolute;
+    z-index: 10;
+    width: 80%;
+    max-width: 600px;
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px); /* Efeito de vidro borrado */
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.5);
+}
+
+/* REGRA DOS AVALIADORES: Perguntas e respostas em CAIXA ALTA */
+.texto-pergunta {
+    text-transform: uppercase; 
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+.opcoes-resposta {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espaço entre os botões */
+}
+
+/* Botões de resposta usando estilo base, mas podem receber classes do Bootstrap via JS */
+.btn-resposta {
+    text-transform: uppercase; /* Força caixa alta nas respostas */
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    background-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.btn-resposta:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Classes para o JS aplicar quando a criança acertar/errar */
+.btn-resposta.correta {
+    background-color: #28a745 !important; /* Verde do Bootstrap */
+    color: white;
+}
+
+.btn-resposta.errada {
+    background-color: #dc3545 !important; /* Vermelho do Bootstrap */
+    color: white;
+}
+
+/* Ocultar elementos */
+.oculto {
+    display: none !important;
+}
