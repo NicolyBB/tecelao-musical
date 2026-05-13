@@ -3,88 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tecelão Musical - Jogando</title>
-    <!-- Link para o CSS -->
+    <title>TECELÃO MUSICAL - JOGANDO</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    <!-- Container principal que vai dividir a tela em Barra Lateral e Área do Jogo -->
-    <main class="container-jogo">
 
-        <!-- ==========================================
-             BARRA LATERAL (ESQUERDA)
-             Onde ficam os status, o marreco e o alvo
-        =========================================== -->
+    <section id="telaIdentificacao" class="tela-cheia">
+        <div class="cartao-identificacao">
+            <h1 class="texto-caixa-alta">BEM-VINDO AO JOGO!</h1>
+            <p class="texto-caixa-alta">QUER NOS CONTAR QUEM VOCÊ É?</p>
+            
+            <div class="grupo-input">
+                <input type="text" id="inputNome" placeholder="QUAL O SEU NOME? (OPCIONAL)" class="input-estilizado">
+                <input type="text" id="inputEscola" placeholder="QUAL SUA ESCOLA? (OPCIONAL)" class="input-estilizado">
+                <input type="number" id="inputIdade" placeholder="SUA IDADE? (OPCIONAL)" class="input-estilizado">
+            </div>
+
+            <button onclick="iniciarJogo()" class="btn-principal">VAMOS JOGAR! 🚀</button>
+        </div>
+    </section>
+
+    <main id="containerJogo" class="container-jogo oculto">
+
         <aside class="barra-lateral">
             <header class="status-jogo">
-                <h2>🧵 TECELÃO</h2>
-                <p>FASE 1/5</p>
-                <p>👤 <span id="nomeJogador">Jogador</span></p>
+                <h2 class="texto-caixa-alta">🧵 TECELÃO</h2>
+                <p id="contadorFase">FASE 1/15</p>
+                <p>👤 <span id="nomeJogador">JOGADOR</span></p>
             </header>
 
-            <!-- Bolinhas de progresso das fases (amarelas para concluídas, vazias para pendentes) -->
-            <div class="progresso-fases">
+            <div id="listaProgresso" class="progresso-fases">
                 <span class="circulo-fase ativo"></span>
-                <span class="circulo-fase"></span>
-                <span class="circulo-fase"></span>
-                <span class="circulo-fase"></span>
-                <span class="circulo-fase"></span>
-            </div>
+                </div>
 
-            <!-- Indicador de Velocidade (Nível de Dificuldade) -->
             <div class="indicador-velocidade">
-                <span>VELOCIDADE: 🐌 LENTO</span> <!-- Vai mudar via JS para Normal/Rápido -->
-            </div>
+                <span id="txtVelocidade" class="texto-caixa-alta">VELOCIDADE: 🐌 LENTO</span> </div>
 
-            <!-- Área do Alvo para apertar o espaço -->
             <div class="area-alvo">
                 <div class="dica-espaco">
-                    <p>APERTE <strong>ESPAÇO</strong> NO ALVO!</p>
+                    <p class="texto-caixa-alta">APERTE <strong>ESPAÇO</strong> NO ALVO!</p>
                 </div>
-                <!-- Imagem do marreco -->
-                <img src="./assets/marreco.png" alt="Marreco" class="marreco-alvo">
+                <img src="./assets/marreco.png" alt="MARRECO" class="marreco-alvo">
                 
-                <!-- O alvo físico onde a bolinha precisa bater -->
                 <div id="linhaAlvo" class="linha-alvo">
-                    <img src="./assets/caixa-som.png" alt="Caixa de Som Alvo">
+                    <img src="./assets/caixa-som.png" alt="CAIXA DE SOM ALVO">
                 </div>
             </div>
         </aside>
 
-        <!-- ==========================================
-             ÁREA PRINCIPAL (DIREITA)
-             Onde a bolinha cai, a imagem se revela e a pergunta aparece
-        =========================================== -->
         <section class="area-ritmo">
             
-            <!-- Fundo dinâmico: Aqui o JS vai trocar a imagem aos poucos até formar a festa completa -->
             <div id="fundoRevelacao" class="fundo-revelacao">
-                <!-- A bolinha que vai cair (animada via JS/CSS) -->
                 <div id="bolinhaCaindo" class="bolinha-ritmo"></div>
             </div>
 
-            <!-- ==========================================
-                 MODAL DA PERGUNTA (Inicia Escondido)
-                 Aparece só quando a imagem terminar de revelar
-            =========================================== -->
             <div id="modalPergunta" class="modal-pergunta oculto">
                 <div class="cartao-pergunta">
                     
-                    <button class="btn-ouvir-audio">🔊 OUVIR</button>
+                    <button id="btnVoz" class="btn-ouvir-audio">🔊 OUVIR PERGUNTA</button>
 
-                    <h3 class="texto-pergunta">NA FESTA MAIS ANIMADA DE BRUSQUE, A FENARRECO, A GENTE CANTA E DANÇA IMITANDO QUAL BICHINHO?</h3>
+                    <h3 id="perguntaTexto" class="texto-pergunta">NA FESTA MAIS ANIMADA DE BRUSQUE, A FENARRECO, A GENTE CANTA E DANÇA IMITANDO QUAL BICHINHO?</h3>
 
-                    <div class="opcoes-resposta">
-                        <!-- Botões de resposta -->
-                        <button class="btn-resposta" onclick="verificarResposta('cachorro')">O CACHORRINHO 🐶</button>
-                        <button class="btn-resposta correta" onclick="verificarResposta('marreco')">O MARRECO (UM TIPO DE PATO) 🦆</button>
-                        <button class="btn-resposta" onclick="verificarResposta('gato')">O GATINHO 🐱</button>
-                    </div>
+                    <div id="containerOpcoes" class="opcoes-resposta">
+                        </div>
 
-                    <!-- Mensagem de feedback (ex: "Parabéns! Acertou!") que aparece após o clique -->
                     <div id="feedbackResposta" class="feedback-resposta oculto">
-                        <p>🎉 PARABÉNS! ACERTOU!</p>
-                        <p class="curiosidade">🎵 A TRADICIONAL DANÇA DO MARRECO É TOCADA COM MÚSICA DE BANDINHA ALEMÃ!</p>
+                        <p class="texto-caixa-alta">🎉 MUITO BEM!</p>
+                        <p id="curiosidadeTexto" class="curiosidade">🎵 A TRADICIONAL DANÇA DO MARRECO É TOCADA COM MÚSICA DE BANDINHA ALEMÃ!</p>
                         <button id="btnProximaFase" class="btn-avancar">PRÓXIMA FASE →</button>
                     </div>
 
@@ -94,6 +79,16 @@
         </section>
 
     </main>
+
+    <section id="telaResultado" class="tela-cheia oculto">
+        <div class="cartao-resultado">
+            <h1 id="tituloResultado" class="texto-caixa-alta">PARABÉNS!</h1>
+            <div id="areaMarrecoFinal">
+                </div>
+            <p id="mensagemFinal" class="texto-caixa-alta"></p>
+            <button onclick="location.reload()" class="btn-principal">JOGAR DE NOVO 🔄</button>
+        </div>
+    </section>
 
     <script src="./js/script.js"></script>
 </body>
