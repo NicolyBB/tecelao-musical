@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TECELÃO MUSICAL - JOGANDO</title>
+    <title>TECELÃO MUSICAL - BRUSQUE</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
 
     <section id="telaIdentificacao" class="tela-cheia">
+        
+        <div id="particles-js"></div>
+
         <div class="cartao-identificacao">
             <h1 class="texto-caixa-alta">BEM-VINDO AO JOGO!</h1>
             <p class="texto-caixa-alta">QUER NOS CONTAR QUEM VOCÊ É?</p>
             
             <div class="grupo-input">
-                <input type="text" id="inputNome" placeholder="QUAL O SEU NOME? (OPCIONAL)" class="input-estilizado">
-                <input type="text" id="inputEscola" placeholder="QUAL SUA ESCOLA? (OPCIONAL)" class="input-estilizado">
-                <input type="number" id="inputIdade" placeholder="SUA IDADE? (OPCIONAL)" class="input-estilizado">
+                <input type="text" id="inputNome" placeholder="QUAL O SEU NOME?" class="input-estilizado">
+                <input type="text" id="inputEscola" placeholder="QUAL SUA ESCOLA?" class="input-estilizado">
+                <input type="number" id="inputIdade" placeholder="SUA IDADE?" class="input-estilizado">
             </div>
 
             <button onclick="iniciarJogo()" class="btn-principal">VAMOS JOGAR! 🚀</button>
@@ -32,47 +35,55 @@
                 <p>👤 <span id="nomeJogador">JOGADOR</span></p>
             </header>
 
-            <div id="listaProgresso" class="progresso-fases">
-                <span class="circulo-fase ativo"></span>
-                </div>
+            <div id="listaProgresso" class="progresso-fases"></div>
 
             <div class="indicador-velocidade">
-                <span id="txtVelocidade" class="texto-caixa-alta">VELOCIDADE: 🐌 LENTO</span> </div>
+                <span id="txtVelocidade" class="texto-caixa-alta">VELOCIDADE: 🐌 LENTO</span> 
+            </div>
 
-            <div class="area-alvo">
-                <div class="dica-espaco">
-                    <p class="texto-caixa-alta">APERTE <strong>ESPAÇO</strong> NO ALVO!</p>
-                </div>
-                <img src="./assets/marreco.png" alt="MARRECO" class="marreco-alvo">
-                
-                <div id="linhaAlvo" class="linha-alvo">
-                    <img src="./assets/caixa-som.png" alt="CAIXA DE SOM ALVO">
-                </div>
+            <div class="ajuda-visual">
+                <img src="./assets/marreco.png" alt="MARRECO" class="marreco-decorativo">
             </div>
         </aside>
 
         <section class="area-ritmo">
             
-            <div id="fundoRevelacao" class="fundo-revelacao">
-                <div id="bolinhaCaindo" class="bolinha-ritmo"></div>
+            <img id="fundoRevelacao" class="fundo-revelacao" src="" alt="Fundo Revelação">
+
+            <div class="container-alvo-lateral">
+                <div class="dica-espaco-lateral">
+                    <p class="texto-caixa-alta">APERTE <strong>ESPAÇO</strong> AQUI!</p>
+                </div>
+                <div id="linhaAlvo" class="linha-alvo-lateral">
+                    <img src="./assets/caixa-som.png" alt="CAIXA DE SOM">
+                </div>
+            </div>
+
+            <div id="bolinhaCaindo" class="bolinha-ritmo-lateral"></div>
+
+            <div class="container-marreco-animado">
+                <video id="videoMarreco" class="video-marreco" autoplay loop muted playsinline>
+                    <source src="" type="video/mp4">
+                </video>
             </div>
 
             <div id="modalPergunta" class="modal-pergunta oculto">
+                
+                <img id="imagemPerguntaMini" src="" alt="Imagem da Fase" class="imagem-mini-pergunta-fora">
+
                 <div class="cartao-pergunta">
-                    
                     <button id="btnVoz" class="btn-ouvir-audio">🔊 OUVIR PERGUNTA</button>
 
-                    <h3 id="perguntaTexto" class="texto-pergunta">NA FESTA MAIS ANIMADA DE BRUSQUE, A FENARRECO, A GENTE CANTA E DANÇA IMITANDO QUAL BICHINHO?</h3>
+                    <h3 id="perguntaTexto" class="texto-pergunta"></h3>
 
                     <div id="containerOpcoes" class="opcoes-resposta">
                         </div>
 
                     <div id="feedbackResposta" class="feedback-resposta oculto">
-                        <p class="texto-caixa-alta">🎉 MUITO BEM!</p>
-                        <p id="curiosidadeTexto" class="curiosidade">🎵 A TRADICIONAL DANÇA DO MARRECO É TOCADA COM MÚSICA DE BANDINHA ALEMÃ!</p>
+                        <p id="tituloFeedback" class="texto-caixa-alta">🎉 MUITO BEM!</p>
+                        <p id="curiosidadeTexto" class="curiosidade"></p>
                         <button id="btnProximaFase" class="btn-avancar">PRÓXIMA FASE →</button>
                     </div>
-
                 </div>
             </div>
 
@@ -90,6 +101,7 @@
         </div>
     </section>
 
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="./js/script.js"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 /* =======================================================
-   VARIÁVEIS E CORES GERAIS (INSPIRADAS NA CULTURA LOCAL)
+   VARIÁVEIS E CORES GERAIS
+   Inspiradas na cultura alemã e local de Brusque
 ======================================================== */
 :root {
     --alemana-preto: #212121;
@@ -8,6 +9,8 @@
     --fundo-gradiente: linear-gradient(135deg, #2A0845 0%, #6441A5 100%);
     --vidro-fundo: rgba(255, 255, 255, 0.15);
     --vidro-borda: rgba(255, 255, 255, 0.2);
+    --cor-lateral: #000000; /* Fundo lateral alterado para Preto */
+    --cor-ritmo: #2A0845;   /* Fundo do jogo alterado para Roxo */
 }
 
 /* =======================================================
@@ -17,7 +20,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* REGRA: Todo o texto importante em CAIXA ALTA para leitura infantil */
     text-transform: uppercase; 
 }
 
@@ -27,11 +29,39 @@ body {
     font-family: 'Arial', sans-serif;
     height: 100vh;
     width: 100vw;
-    overflow: hidden; /* Mantém o jogo focado na tela do Chromebook */
+    overflow: hidden; 
 }
 
 /* =======================================================
-   ESTRUTURA DA TELA E CONTENTORES
+   TELA INICIAL E PARTÍCULAS
+======================================================== */
+#telaIdentificacao {
+    position: relative;
+}
+
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.cartao-identificacao {
+    background: var(--vidro-fundo);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--vidro-borda);
+    border-radius: 30px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 10;
+}
+
+/* =======================================================
+   ESTRUTURA DA TELA PRINCIPAL E BARRA LATERAL
 ======================================================== */
 .tela-cheia {
     height: 100vh;
@@ -47,113 +77,152 @@ body {
     width: 100vw;
 }
 
-/* =======================================================
-   BARRA LATERAL (STATUS E ALVO)
-======================================================== */
 .barra-lateral {
     width: 280px;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--cor-lateral); /* MUDANÇA: Agora é PRETA */
     padding: 30px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     border-right: 2px solid var(--vidro-borda);
     gap: 25px;
+    z-index: 10;
+    position: relative; 
 }
 
-.status-jogo h2 {
-    color: var(--alemana-amarelo);
-    margin-bottom: 5px;
-    font-size: 1.5rem;
-}
+.status-jogo h2 { color: var(--alemana-amarelo); font-size: 1.5rem; }
+.progresso-fases { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 
-.progresso-fases {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-}
-
-.circulo-fase {
-    width: 20px;
-    height: 20px;
-    border: 2px solid white;
-    border-radius: 50%;
-}
-
-.circulo-fase.ativo {
-    background-color: var(--alemana-amarelo);
-    border-color: var(--alemana-amarelo);
-    box-shadow: 0 0 10px var(--alemana-amarelo);
-}
-
-/* ÁREA DO ALVO DE RITMO */
-.area-alvo {
-    margin-top: auto;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 15px;
-    border-radius: 20px;
-}
-
-.marreco-alvo {
-    width: 100px;
-    margin-bottom: 10px;
-}
-
-.linha-alvo {
-    width: 120px;
-    height: 120px;
-    border: 4px dashed var(--alemana-amarelo);
-    border-radius: 20px;
+/* =======================================================
+   MARRECO ANIMADO DENTRO DA BARRA LATERAL (CANTO INFERIOR)
+======================================================== */
+.container-marreco-animado {
+    position: absolute;
+    bottom: 20px; /* No fundo da barra preta */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px; /* Tamanho ajustado para caber na lateral */
+    height: 150px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(255, 206, 0, 0.1);
-    transition: transform 0.1s;
+    z-index: 50; 
+    pointer-events: none;
 }
 
-.linha-alvo img {
-    width: 60%;
+.video-marreco {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: transparent;
 }
 
 /* =======================================================
-   ÁREA PRINCIPAL (REVELAÇÃO E BOLINHA)
+   ÁREA DE RITMO (FUNDO E MECÂNICA)
 ======================================================== */
 .area-ritmo {
     flex-grow: 1;
     position: relative;
+    overflow: hidden; 
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0,0,0,0.2);
+    align-items: flex-start; 
+    justify-content: flex-start; 
+    background: var(--cor-ritmo); 
 }
 
 .fundo-revelacao {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background-size: cover;
-    background-position: center;
-    /* A imagem de Brusque (Ponte, Zoo, etc) será revelada aqui via JS */
-    transition: background-color 0.5s ease; 
+    object-fit: cover;
+    opacity: 0; 
+    transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1); 
+    z-index: 1;
 }
 
-.bolinha-ritmo {
+.container-alvo-lateral {
+    position: absolute;
+    bottom: 40px; 
+    left: 140px; 
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.linha-alvo-lateral {
+    width: 120px;
+    height: 120px;
+    border: 5px dashed var(--alemana-amarelo);
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    transition: box-shadow 0.2s ease, transform 0.2s ease; 
+}
+
+.linha-alvo-lateral img { width: 60%; }
+
+.dica-espaco-lateral { 
+    background: rgba(0,0,0,0.6); 
+    padding: 5px 15px; 
+    border-radius: 10px; 
+    white-space: nowrap; 
+}
+
+.bolinha-ritmo-lateral {
     width: 70px;
     height: 70px;
     background-color: white;
     border-radius: 50%;
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 140px; 
+    transform: translateX(-50%); 
     box-shadow: 0 0 20px rgba(255,255,255,0.8);
-    top: -80px;
+    top: -80px; 
+    z-index: 4; 
 }
 
+@keyframes feedbackAcertoRitmo {
+    0% { box-shadow: 0 0 0px var(--alemana-amarelo); transform: scale(1); }
+    50% { box-shadow: 0 0 60px var(--alemana-amarelo); transform: scale(1.2); background-color: var(--alemana-amarelo); }
+    100% { box-shadow: 0 0 0px var(--alemana-amarelo); transform: scale(1); }
+}
+
+.acerto-ritmo-feedback { animation: feedbackAcertoRitmo 0.3s ease-out; }
+
 /* =======================================================
-   MODAIS E CARTÕES (ESTILO VIDRO / GLASSMORPHISM)
+   MODAL DE PERGUNTA
 ======================================================== */
-.cartao-identificacao, .modal-pergunta, .cartao-resultado {
+.modal-pergunta {
+    position: absolute;
+    right: 5%; 
+    bottom: 5%; 
+    width: 45%; 
+    max-width: 650px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.imagem-mini-pergunta-fora {
+    width: 100%;
+    height: 250px; 
+    object-fit: cover; 
+    border-radius: 20px;
+    margin-bottom: 15px; 
+    border: 4px solid var(--alemana-amarelo);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    transition: opacity 0.3s;
+}
+
+.cartao-pergunta, .cartao-resultado {
     background: var(--vidro-fundo);
     backdrop-filter: blur(15px);
     border: 2px solid var(--vidro-borda);
@@ -161,94 +230,24 @@ body {
     padding: 40px;
     text-align: center;
     box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-}
-
-.modal-pergunta {
-    position: absolute;
-    width: 85%;
-    max-width: 700px;
-    z-index: 100;
+    width: 100%;
 }
 
 /* =======================================================
-   BOTÕES E INPUTS (FOCADOS EM ACESSIBILIDADE INFANTIL)
+   BOTÕES E FEEDBACK
 ======================================================== */
-.btn-principal, .btn-resposta, .btn-avancar {
-    width: 100%;
-    padding: 20px;
-    margin: 10px 0;
-    border-radius: 15px;
-    border: none;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+.btn-principal, .btn-resposta, .btn-avancar { width: 100%; padding: 15px; margin: 8px 0; border-radius: 15px; border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
 
-.btn-principal {
-    background-color: var(--alemana-amarelo);
-    color: var(--alemana-preto);
-}
+.btn-principal { background-color: var(--alemana-amarelo); color: var(--alemana-preto); }
+.btn-resposta { background-color: rgba(0, 0, 0, 0.4); color: white; border: 2px solid var(--vidro-borda); }
+.btn-resposta:hover { background-color: var(--alemana-amarelo); color: var(--alemana-preto); transform: scale(1.02); }
 
-.btn-resposta {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-}
+.btn-ouvir-audio { background: var(--alemana-vermelho); color: white; border: none; padding: 10px 20px; border-radius: 50px; margin-bottom: 20px; font-weight: bold; }
 
-.btn-resposta:hover {
-    background-color: var(--alemana-amarelo);
-    color: var(--alemana-preto);
-    transform: scale(1.02);
-}
+.input-estilizado { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 10px; border: 2px solid var(--vidro-borda); background: rgba(255,255,255,0.1); color: white; }
+.input-estilizado::placeholder { color: rgba(255, 255, 255, 0.7); }
 
-.btn-ouvir-audio {
-    background: var(--alemana-vermelho);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 50px;
-    margin-bottom: 20px;
-    font-weight: bold;
-    cursor: pointer;
-}
+.oculto { display: none !important; }
 
-.input-estilizado {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    border: 2px solid var(--vidro-borda);
-    background: rgba(255,255,255,0.1);
-    color: white;
-}
-
-/* =======================================================
-   UTILITÁRIOS E FEEDBACK
-======================================================== */
-.oculto {
-    display: none !important;
-}
-
-.feedback-resposta {
-    margin-top: 20px;
-    padding: 20px;
-    background: rgba(40, 167, 69, 0.3); /* Verde suave */
-    border-radius: 20px;
-}
-
-.curiosidade {
-    font-style: italic;
-    font-size: 0.9rem;
-    margin: 15px 0;
-}
-
-/* ANIMAÇÃO DE ACERTO NO RITMO */
-@keyframes brilhoAlvo {
-    0% { box-shadow: 0 0 0px var(--alemana-amarelo); }
-    50% { box-shadow: 0 0 30px var(--alemana-amarelo); }
-    100% { box-shadow: 0 0 0px var(--alemana-amarelo); }
-}
-
-.acerto-ritmo {
-    animation: brilhoAlvo 0.3s ease;
-}
+.feedback-resposta { margin-top: 15px; padding: 20px; border-radius: 20px; transition: background 0.3s; }
+.curiosidade { font-style: italic; font-size: 0.9rem; margin: 15px 0; }
