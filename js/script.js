@@ -73,7 +73,7 @@ const bancoPerguntas = [
    GERENCIAMENTO DE VÍDEO E INÍCIO
 ======================================================== */
 function trocarVideoMarreco(caminho) {
-    if (videoMarreco.src !== caminho) {
+    if (videoMarreco.getAttribute('src') !== caminho) {
         videoMarreco.src = caminho;
         videoMarreco.load();
         videoMarreco.play().catch(e => console.log("Erro ao carregar animação:", e));
@@ -183,7 +183,7 @@ function mostrarPerguntaModal() {
         window.speechSynthesis.speak(fala);
     };
 
-    trocarVideoMarreco(pathComemorando);
+    trocarVideoMarreco(pathDancando);
 
     modal.classList.remove('oculto');
     imagemPerguntaMini.src = `./assets/imgs/${q.img}`;
@@ -217,9 +217,11 @@ function verificarRespostaQuiz(correto, curiosidade) {
         totalAcertosQuiz++;
         tituloFeedback.innerText = "🎉 MUITO BEM! VOCÊ ACERTOU!";
         feedback.style.background = "rgba(40, 167, 69, 0.8)"; 
+        trocarVideoMarreco(pathComemorando);
     } else {
         tituloFeedback.innerText = "🤔 OPS! QUASE LÁ, MAS OLHA SÓ:";
         feedback.style.background = "rgba(208, 0, 0, 0.8)"; 
+        trocarVideoMarreco(pathDancando);
     }
     
     containerOpcoes.classList.add('oculto');

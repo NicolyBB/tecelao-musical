@@ -98,11 +98,10 @@ body {
 ======================================================== */
 .container-marreco-animado {
     position: absolute;
-    bottom: 20px; /* No fundo da barra preta */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 150px; /* Tamanho ajustado para caber na lateral */
-    height: 150px;
+    bottom: 40px;
+    left: 230px;
+    width: 170px;
+    height: 170px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -115,6 +114,7 @@ body {
     height: 100%;
     object-fit: contain;
     background: transparent;
+    mix-blend-mode: screen;
 }
 
 /* =======================================================
@@ -155,18 +155,20 @@ body {
 }
 
 .linha-alvo-lateral {
-    width: 120px;
-    height: 120px;
-    border: 5px dashed var(--alemana-amarelo);
-    border-radius: 20px;
+    width: 150px;
+    height: 150px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.4);
     transition: box-shadow 0.2s ease, transform 0.2s ease; 
 }
 
-.linha-alvo-lateral img { width: 60%; }
+.linha-alvo-lateral img {
+    width: 125%;
+    height: 125%;
+    object-fit: contain;
+    pointer-events: none;
+}
 
 .dica-espaco-lateral { 
     background: rgba(0,0,0,0.6); 
