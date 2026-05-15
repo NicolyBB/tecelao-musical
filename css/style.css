@@ -100,8 +100,8 @@ body {
     position: absolute;
     bottom: 40px;
     left: 230px;
-    width: 170px;
-    height: 170px;
+    width: 250px;
+    height: 250px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -114,7 +114,6 @@ body {
     height: 100%;
     object-fit: contain;
     background: transparent;
-    mix-blend-mode: screen;
 }
 
 /* =======================================================

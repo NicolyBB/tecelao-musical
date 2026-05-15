@@ -6,6 +6,7 @@ const bolinha = document.getElementById('bolinhaCaindo');
 const alvo = document.getElementById('linhaAlvo');
 const modal = document.getElementById('modalPergunta');
 const fundo = document.getElementById('fundoRevelacao');
+const dicaEspaco = document.querySelector('.dica-espaco-lateral');
 const indicadorVelocidade = document.getElementById('txtVelocidade');
 const containerOpcoes = document.getElementById('containerOpcoes');
 const telaIdentificacao = document.getElementById('telaIdentificacao');
@@ -29,8 +30,23 @@ let perguntasEmbaralhadas = [];
 /* =======================================================
    CAMINHOS PARA AS ANIMAÇÕES DO MARRECO
 ======================================================== */
-const pathDancando = "./assets/animacoes/marrecoDancando.mp4";
-const pathComemorando = "./assets/animacoes/marrecoComemorando.mp4";
+const pathDancando = [
+    { src: "./assets/animacoes/marrecoDancando.webm", type: "video/webm" },
+    { src: "./assets/animacoes/marrecoDancando.mp4", type: "video/mp4" }
+];
+const pathComemorando = [
+    { src: "./assets/animacoes/marrecoComemorando.webm", type: "video/webm" },
+    { src: "./assets/animacoes/marrecoComemorando.mp4", type: "video/mp4" }
+];
+
+const somBotao = new Audio("./assets/sons/botao.mp3");
+const somAcerto = new Audio("./assets/sons/acerto.mp3");
+const somErro = new Audio("./assets/sons/erro.mp3");
+
+function tocarSom(som) {
+    som.currentTime = 0;
+    som.play().catch(e => console.log("Erro ao tocar som:", e));
+}
 
 /* =======================================================
    INICIALIZAÇÃO DE PARTÍCULAS NO LOGIN
@@ -72,9 +88,20 @@ const bancoPerguntas = [
 /* =======================================================
    GERENCIAMENTO DE VÍDEO E INÍCIO
 ======================================================== */
-function trocarVideoMarreco(caminho) {
-    if (videoMarreco.getAttribute('src') !== caminho) {
-        videoMarreco.src = caminho;
+function trocarVideoMarreco(fontes) {
+    const fontePrincipal = fontes[0].src;
+
+    if (videoMarreco.dataset.videoAtual !== fontePrincipal) {
+        videoMarreco.dataset.videoAtual = fontePrincipal;
+        videoMarreco.innerHTML = "";
+
+        fontes.forEach((fonte) => {
+            const source = document.createElement('source');
+            source.src = fonte.src;
+            source.type = fonte.type;
+            videoMarreco.appendChild(source);
+        });
+
         videoMarreco.load();
         videoMarreco.play().catch(e => console.log("Erro ao carregar animação:", e));
     }
@@ -140,6 +167,7 @@ function verificarAcertoRitmo() {
     if (rectBolinha.bottom >= rectAlvo.top && rectBolinha.top <= rectAlvo.bottom) {
         posicaoY = -70;
         acertosRitmo++;
+        tocarSom(somBotao);
         
         alvo.classList.add('acerto-ritmo-feedback');
         setTimeout(() => alvo.classList.remove('acerto-ritmo-feedback'), 300);
@@ -184,6 +212,8 @@ function mostrarPerguntaModal() {
     };
 
     trocarVideoMarreco(pathDancando);
+    dicaEspaco.classList.add('oculto');
+    bolinha.classList.add('oculto');
 
     modal.classList.remove('oculto');
     imagemPerguntaMini.src = `./assets/imgs/${q.img}`;
@@ -217,10 +247,12 @@ function verificarRespostaQuiz(correto, curiosidade) {
         totalAcertosQuiz++;
         tituloFeedback.innerText = "🎉 MUITO BEM! VOCÊ ACERTOU!";
         feedback.style.background = "rgba(40, 167, 69, 0.8)"; 
+        tocarSom(somAcerto);
         trocarVideoMarreco(pathComemorando);
     } else {
         tituloFeedback.innerText = "🤔 OPS! QUASE LÁ, MAS OLHA SÓ:";
         feedback.style.background = "rgba(208, 0, 0, 0.8)"; 
+        tocarSom(somErro);
         trocarVideoMarreco(pathDancando);
     }
     
@@ -239,6 +271,8 @@ function proximaFase() {
     perguntaAtualIndex++;
     if (perguntaAtualIndex < 15) {
         modal.classList.add('oculto');
+        dicaEspaco.classList.remove('oculto');
+        bolinha.classList.remove('oculto');
         acertosRitmo = 0;
         posicaoY = -70;
         
