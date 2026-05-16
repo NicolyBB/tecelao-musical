@@ -42,10 +42,58 @@ const pathComemorando = [
 const somBotao = new Audio("./assets/sons/botao.mp3");
 const somAcerto = new Audio("./assets/sons/acerto.mp3");
 const somErro = new Audio("./assets/sons/erro.mp3");
+let audioNarracaoAtual = null;
 
 function tocarSom(som) {
     som.currentTime = 0;
+    som.onended = null;
     som.play().catch(e => console.log("Erro ao tocar som:", e));
+}
+
+function tocarEfeitoEResposta(som, numeroPergunta) {
+    pararNarracao();
+    som.currentTime = 0;
+    som.onended = () => {
+        som.onended = null;
+        tocarResposta(numeroPergunta);
+    };
+    som.play().catch(e => console.log("Erro ao tocar som:", e));
+}
+
+function pararNarracao() {
+    if (audioNarracaoAtual) {
+        audioNarracaoAtual.pause();
+        audioNarracaoAtual.currentTime = 0;
+        audioNarracaoAtual = null;
+    }
+}
+
+function caminhoResposta(numeroPergunta) {
+    return numeroPergunta === 1
+        ? "./assets/sons/Resposta.m4a"
+        : `./assets/sons/Resposta ${numeroPergunta}.m4a`;
+}
+
+function tocarSequenciaAudios(caminhos, indice = 0) {
+    pararNarracao();
+
+    if (indice >= caminhos.length) return;
+
+    const audio = new Audio(caminhos[indice]);
+    audioNarracaoAtual = audio;
+    audio.onended = () => tocarSequenciaAudios(caminhos, indice + 1);
+    audio.play().catch(e => console.log("Erro ao tocar narração:", e));
+}
+
+function tocarPerguntaEOpcoes(numeroPergunta) {
+    tocarSequenciaAudios([
+        `./assets/sons/Questão ${numeroPergunta}.m4a`,
+        `./assets/sons/Opções ${numeroPergunta}.m4a`
+    ]);
+}
+
+function tocarResposta(numeroPergunta) {
+    tocarSequenciaAudios([caminhoResposta(numeroPergunta)]);
 }
 
 /* =======================================================
@@ -88,6 +136,24 @@ const bancoPerguntas = [
 /* =======================================================
    GERENCIAMENTO DE VÍDEO E INÍCIO
 ======================================================== */
+const perguntasOrdenadas = [
+    { p: "NA FESTA MAIS ANIMADA DE BRUSQUE, A FENARRECO, A GENTE CANTA E DANÇA IMITANDO QUAL BICHINHO?", opts: ["O CACHORRINHO 🐶", "O MARRECO (UM TIPO DE PATO) 🦆", "O GATINHO 🐱"], corr: 1, cur: "🎵 A TRADICIONAL DANÇA DO MARRECO É MÚSICA DE BANDINHA ALEMÃ!", img: "Imagem1.jpeg" },
+    { p: "QUAL INSTRUMENTO MUSICAL FAZ UM SOM DIVERTIDO PARECIDO COM 'FOM-FOM' NAS FESTAS DA CIDADE?", opts: ["A SANFONA (GAITA OU ACORDEON) 🪗", "O VIOLÃO 🎸", "A FLAUTA 🪈"], corr: 0, cur: "🎵 MÚSICAS TRADICIONAIS DE GAITA TOCAM NOS PAVILHÕES DA FESTA!", img: "Imagem2.jpeg" },
+    { p: "QUANDO TOCA A MÚSICA DA FESTA, QUE ROUPA BONITA E DIFERENTE AS CRIANÇAS VESTEM PARA DANÇAR?", opts: ["ROUPA DE ASTRONAUTA 🧑‍🚀", "ROUPA DE DORMIR (PIJAMA) 🛌", "ROUPINHA ALEMÃ (COM SUSPENSÓRIO E VESTIDO RODADO) 👗👖"], corr: 2, cur: "🎵 MARCHINHAS ALEGRES DE DESFILE ANIMAM A FESTA!", img: "Imagem3.jpeg" },
+    { p: "BRUSQUE FAZ MUITOS TECIDOS PARA AS NOSSAS ROUPAS! QUE BARULHINHO A MÁQUINA DE TECER FAZ?", opts: ["MIAU, MIAU 🐈", "TEC-TEC, TIC-TAC 🧵", "PIU-PIU 🐥"], corr: 1, cur: "🎵 O RITMO DAS MÁQUINAS TRABALHANDO É A MÚSICA DO TEAR!", img: "Imagem4.jpeg" },
+    { p: "NO LUGAR CHAMADO AZAMBUJA, O QUE FICA LÁ NO ALTO DA IGREJA E FAZ 'BLEM, BLOM' BEM ALTO?", opts: ["O SINO 🔔", "UM AVIÃO ✈️", "UM PASSARINHO 🐦"], corr: 0, cur: "🎵 OS SINOS DO SANTUÁRIO DE AZAMBUJA TOCAM COMO MÚSICA NO CÉU!", img: "Imagem5.jpeg" },
+    { p: "COMO A GENTE BATE PALMA QUANDO A BANDINHA ALEMÃ PASSA TOCANDO NAS RUAS DE BRUSQUE?", opts: ["BEM DEVAGARINHO E COM SONO 🥱", "NO RITMO DA MARCHA, BEM FORTE! 👏", "A GENTE ESCONDE AS MÃOS 🙈"], corr: 1, cur: "🎵 AS MARCHAS DE DESFILE DA FENARRECO PEDEM PALMAS FORTES!", img: "Imagem6.jpeg" },
+    { p: "NA MÚSICA DO MARRECO, COMO É O SOM QUE O BICO DO MARRECO FAZ QUANDO ELE CANTA?", opts: ["AU AU 🐕", "MUUUU 🐄", "QUÁ, QUÁ, QUÁ! 🦆"], corr: 2, cur: "🎵 AS CANTIGAS INFANTIS BRINCAM COM OS SONS DOS ANIMAIS!", img: "Imagem7.jpeg" },
+    { p: "NAS MÚSICAS EM RODA DA TRADIÇÃO ALEMÃ, COMO AS PESSOAS GOSTAM DE DANÇAR?", opts: ["SOZINHAS E DE COSTAS 🧍", "DE MÃOS DADAS FORMANDO UMA RODA GIGANTE! 🤝", "DEITADAS NO CHÃO 🛌"], corr: 1, cur: "🎵 A DANÇA FOLCLÓRICA DE RODA JUNTA TODO MUNDO!", img: "Imagem8.jpeg" },
+    { p: "NO DESFILE DE BRUSQUE, QUAL É O INSTRUMENTO ENORME QUE FAZ UM BARULHO QUE TREME A BARRIGA: 'BUM, BUM, BUM'?", opts: ["O TRIÂNGULO 🔺", "O CHOCALHO 🪇", "O BUMBO (UM TAMBOR BEM GRANDÃO) 🥁"], corr: 2, cur: "🎵 OS TAMBORES DAS BANDAS MARCIAIS FAZEM A BARRIGA TREMER!", img: "Imagem9.jpeg" },
+    { p: "QUAL DOCE GOSTOSO, QUE PARECE UM LAÇO OU UM ABRAÇO, A GENTE COME ENQUANTO OUVE AS MÚSICAS DA FESTA?", opts: ["PRETZEL (BREZAL) 🥨", "SOPA DE LETRINHAS 🥣", "ALFACE 🥬"], corr: 0, cur: "🎵 AS MÚSICAS ALEGRES EMBALAM A VILA GASTRONÔMICA DE BRUSQUE!", img: "Imagem10.jpeg" },
+    { p: "BRUSQUE TEM UM RIO BEM GRANDE CHAMADO RIO ITAJAÍ-MIRIM. QUE SOM A ÁGUA FAZ?", opts: ["VRUMMM (IGUAL CARRO) 🚗", "CHUÁÁ, CHUÁÁ (ÁGUA CORRENDO) 🌊", "PIII (IGUAL APITO)"], corr: 1, cur: "🎵 O SOM DA ÁGUA É A CANÇÃO DO RIO E DA NATUREZA!", img: "Imagem11.jpeg" },
+    { p: "NAS FESTAS COM MÚSICA, QUE CORES A GENTE VÊ ENFEITANDO TUDO PARA LEMBRAR A BANDEIRA DA ALEMANHA?", opts: ["SÓ BRANCO ⚪", "PRETO, VERMELHO E AMARELO 🖤❤️💛", "ROSA E ROXO 🩷💜"], corr: 1, cur: "🎵 HINOS E CANÇÕES CELEBRAM A CULTURA DOS IMIGRANTES!", img: "Imagem12.jpeg" },
+    { p: "O QUE AS VOVÓS E VOVÔS CANTAM BEM BAIXINHO PARA OS BEBÊS DORMIREM EM BRUSQUE?", opts: ["ROCK N' ROLL BEM ALTO 🎸", "CANTIGAS DE NINAR (MÚSICAS CALMINHAS) 👶🎵", "SOM DE BUZINA DE CAMINHÃO 🚛"], corr: 1, cur: "🎵 GUTEN ABEND, GUTE NACHT É UMA CANTIGA DE NINAR TRADICIONAL ALEMÃ!", img: "Imagem13.jpeg" },
+    { p: "ALÉM DA SANFONA, QUE OUTRO INSTRUMENTO TEM TECLAS QUE PARECEM DENTES BRANCOS E PRETOS?", opts: ["O TECLADO/PIANO 🎹", "O PANDEIRO 🪘", "A BATERIA 🥁"], corr: 0, cur: "🎵 MELODIAS CLÁSSICAS TAMBÉM TOCAM NAS ESCOLAS DE MÚSICA DE BRUSQUE!", img: "Imagem14.jpeg" },
+    { p: "QUANDO A FESTA ACABA E A BANDINHA TOCA A ÚLTIMA MÚSICA, O QUE A GENTE FAZ COM A MÃOZINHA?", opts: ["DÁ UM TCHAU BEM FELIZ (TSCHÜSS!) 👋", "DÁ UM SUSTO (BU!) 👻", "ESCONDE A MÃO NO BOLSO 👖"], corr: 0, cur: "🎵 A MÚSICA DE DESPEDIDA ENCERRA A FESTA COM ALEGRIA!", img: "Imagem15.jpeg" }
+];
+
 function trocarVideoMarreco(fontes) {
     const fontePrincipal = fontes[0].src;
 
@@ -114,7 +180,7 @@ function iniciarJogo() {
     telaIdentificacao.classList.add('oculto');
     containerJogo.classList.remove('oculto');
     
-    perguntasEmbaralhadas = [...bancoPerguntas].sort(() => Math.random() - 0.5);
+    perguntasEmbaralhadas = [...perguntasOrdenadas];
     
     prepararFundoFase();
     trocarVideoMarreco(pathDancando);
@@ -192,6 +258,7 @@ function verificarAcertoRitmo() {
 ======================================================== */
 function mostrarPerguntaModal() {
     const q = perguntasEmbaralhadas[perguntaAtualIndex];
+    const numeroPergunta = perguntaAtualIndex + 1;
     
     document.getElementById('perguntaTexto').innerText = q.p;
     document.getElementById('contadorFase').innerText = `FASE ${perguntaAtualIndex + 1}/15`;
@@ -201,14 +268,12 @@ function mostrarPerguntaModal() {
         const btn = document.createElement('button');
         btn.className = "btn-resposta";
         btn.innerText = opt;
-        btn.onclick = () => verificarRespostaQuiz(i === q.corr, q.cur);
+        btn.onclick = () => verificarRespostaQuiz(i === q.corr, q.cur, numeroPergunta);
         containerOpcoes.appendChild(btn);
     });
 
     document.getElementById('btnVoz').onclick = () => {
-        const fala = new SpeechSynthesisUtterance(q.p);
-        fala.lang = 'pt-BR';
-        window.speechSynthesis.speak(fala);
+        tocarPerguntaEOpcoes(numeroPergunta);
     };
 
     trocarVideoMarreco(pathDancando);
@@ -236,10 +301,11 @@ function mostrarPerguntaModal() {
     setTimeout(() => {
         imagemPerguntaMini.style.opacity = '1'; 
         fundo.style.opacity = '0'; 
+        tocarPerguntaEOpcoes(numeroPergunta);
     }, 800);
 }
 
-function verificarRespostaQuiz(correto, curiosidade) {
+function verificarRespostaQuiz(correto, curiosidade, numeroPergunta) {
     const tituloFeedback = document.getElementById('tituloFeedback');
     const feedback = document.getElementById('feedbackResposta');
 
@@ -247,12 +313,12 @@ function verificarRespostaQuiz(correto, curiosidade) {
         totalAcertosQuiz++;
         tituloFeedback.innerText = "🎉 MUITO BEM! VOCÊ ACERTOU!";
         feedback.style.background = "rgba(40, 167, 69, 0.8)"; 
-        tocarSom(somAcerto);
+        tocarEfeitoEResposta(somAcerto, numeroPergunta);
         trocarVideoMarreco(pathComemorando);
     } else {
         tituloFeedback.innerText = "🤔 OPS! QUASE LÁ, MAS OLHA SÓ:";
         feedback.style.background = "rgba(208, 0, 0, 0.8)"; 
-        tocarSom(somErro);
+        tocarEfeitoEResposta(somErro, numeroPergunta);
         trocarVideoMarreco(pathDancando);
     }
     
@@ -268,6 +334,7 @@ function verificarRespostaQuiz(correto, curiosidade) {
 }
 
 function proximaFase() {
+    pararNarracao();
     perguntaAtualIndex++;
     if (perguntaAtualIndex < 15) {
         modal.classList.add('oculto');
