@@ -31,11 +31,11 @@ let perguntasEmbaralhadas = [];
    CAMINHOS PARA AS ANIMAÇÕES DO MARRECO
 ======================================================== */
 const pathDancando = [
-    { src: "./assets/animacoes/marrecoDancando.webm", type: "video/webm" },
+// Wander    { src: "./assets/animacoes/marrecoDancando.webm", type: "video/webm" }, acho q isso n é mais necessário
     { src: "./assets/animacoes/marrecoDancando.mp4", type: "video/mp4" }
 ];
 const pathComemorando = [
-    { src: "./assets/animacoes/marrecoComemorando.webm", type: "video/webm" },
+// wander    { src: "./assets/animacoes/marrecoComemorando.webm", type: "video/webm" },
     { src: "./assets/animacoes/marrecoComemorando.mp4", type: "video/mp4" }
 ];
 
