@@ -43,6 +43,9 @@ const somBotao = new Audio("./assets/sons/botao.mp3");
 const somAcerto = new Audio("./assets/sons/acerto.mp3");
 const somErro = new Audio("./assets/sons/erro.mp3");
 let audioNarracaoAtual = null;
+let musicaFundoAtual = null;
+let caminhoMusicaFundoAtual = "";
+const volumeMusicaFundo = 0.14;
 
 function tocarSom(som) {
     som.currentTime = 0;
@@ -94,6 +97,31 @@ function tocarPerguntaEOpcoes(numeroPergunta) {
 
 function tocarResposta(numeroPergunta) {
     tocarSequenciaAudios([caminhoResposta(numeroPergunta)]);
+}
+
+function tocarMusicaFase(caminhoMusica) {
+    if (!caminhoMusica) return;
+
+    if (musicaFundoAtual && caminhoMusicaFundoAtual === caminhoMusica) {
+        return;
+    }
+
+    pararMusicaFase();
+
+    musicaFundoAtual = new Audio(caminhoMusica);
+    caminhoMusicaFundoAtual = caminhoMusica;
+    musicaFundoAtual.loop = true;
+    musicaFundoAtual.volume = volumeMusicaFundo;
+    musicaFundoAtual.play().catch(e => console.log("Erro ao tocar música da fase:", e));
+}
+
+function pararMusicaFase() {
+    if (musicaFundoAtual) {
+        musicaFundoAtual.pause();
+        musicaFundoAtual.currentTime = 0;
+        musicaFundoAtual = null;
+        caminhoMusicaFundoAtual = "";
+    }
 }
 
 /* =======================================================
@@ -154,6 +182,24 @@ const perguntasOrdenadas = [
     { p: "QUANDO A FESTA ACABA E A BANDINHA TOCA A ÚLTIMA MÚSICA, O QUE A GENTE FAZ COM A MÃOZINHA?", opts: ["DÁ UM TCHAU BEM FELIZ (TSCHÜSS!) 👋", "DÁ UM SUSTO (BU!) 👻", "ESCONDE A MÃO NO BOLSO 👖"], corr: 0, cur: "🎵 A MÚSICA DE DESPEDIDA ENCERRA A FESTA COM ALEGRIA!", img: "Imagem15.jpeg" }
 ];
 
+const musicasPorPergunta = [
+    "./assets/musicas/imitamarreco.mp3",
+    "./assets/musicas/sanfona.mp3",
+    "./assets/musicas/roupa_alema.mp3",
+    "./assets/musicas/tecer.mp3",
+    "./assets/musicas/sino.mp3",
+    "./assets/musicas/banda.mp3",
+    "./assets/musicas/marreco.mp3",
+    "./assets/musicas/tradicao_danca.mp3",
+    "./assets/musicas/tambor.mp3",
+    "./assets/musicas/pretzel.mp3",
+    "./assets/musicas/rio.mp3",
+    "./assets/musicas/bandeira.mp3",
+    "./assets/musicas/ninar.mp3",
+    "./assets/musicas/piano.mp3",
+    "./assets/musicas/tchau.mp3"
+];
+
 function trocarVideoMarreco(fontes) {
     const fontePrincipal = fontes[0].src;
 
@@ -180,7 +226,10 @@ function iniciarJogo() {
     telaIdentificacao.classList.add('oculto');
     containerJogo.classList.remove('oculto');
     
-    perguntasEmbaralhadas = [...perguntasOrdenadas];
+    perguntasEmbaralhadas = perguntasOrdenadas.map((pergunta, index) => ({
+        ...pergunta,
+        musica: musicasPorPergunta[index]
+    }));
     
     prepararFundoFase();
     trocarVideoMarreco(pathDancando);
@@ -190,6 +239,7 @@ function iniciarJogo() {
 function prepararFundoFase() {
     const q = perguntasEmbaralhadas[perguntaAtualIndex];
     fundo.src = `./assets/imgs/${q.img}`;
+    tocarMusicaFase(q.musica);
     
     fundo.style.width = '100%';
     fundo.style.height = '100%';
@@ -352,6 +402,8 @@ function proximaFase() {
 }
 
 function exibirResultadoFinal() {
+    pararNarracao();
+    pararMusicaFase();
     containerJogo.classList.add('oculto');
     telaResultado.classList.remove('oculto');
     
